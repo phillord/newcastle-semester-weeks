@@ -111,6 +111,8 @@ def interpolate_calendar(cal):
     for calendar_week in range(0,104):
         ## add the working week
         retn_cal.append(working_week)
+        ## stuff on the calendar week
+        working_week.append(calendar_week % 52 + 1)
         ## increment the semester week for next time!
         if(type(working_week[1]) is int):
             ## clone working week
@@ -151,14 +153,14 @@ for e in datetime_full:
     eve = Event()
     summary = ""
     if( type(e[1]) == int ):
-        summary = "Semester:{} Week:{}".format(semester,e[1])
+        summary = "Semester:{} Week:{} Cal:{}".format(semester,e[1],e[2])
         if(e[1] == 12 ):
             if(semester == 1):
                 semester = 2
             else:
                 semester = 1
     else:
-        summary = e[1]
+        summary = "{} Cal:{}".format(e[1],e[2])
 
     eve.add("summary",summary)
     eve.add("dtstart",e[0])
