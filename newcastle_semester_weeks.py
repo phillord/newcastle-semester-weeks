@@ -153,7 +153,7 @@ for e in datetime_full:
     eve = Event()
     summary = ""
     if( type(e[1]) == int ):
-        summary = "Semester:{} Week:{} Cal:{}".format(semester,e[1],e[2])
+        summary = "Sem:{} Week:{} Cal:{}".format(semester,e[1],e[2])
         if(e[1] == 12 ):
             if(semester == 1):
                 semester = 2
