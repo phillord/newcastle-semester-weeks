@@ -6,14 +6,14 @@ from datetime import date
 from datetime import timedelta
 import numbers
 
-## format is week commencing, teaching week.
+## format is week commencing, teaching week, calendar week.
 ## If teaching week is a string, then is used instead. So
 ## blank for before term, or vacation, or exam
 ##
 ## Simple consecutive weeks can be missed off.
 cal = [
     ## 2014-15
-    ["2014-09-01","Pre Semester 1"],
+    ["2014-09-01","Pre Semester 1",1],
     ["2014-09-29",1],
     ["2014-12-15","Vacation"],
     ["2015-01-05",12],
@@ -26,7 +26,7 @@ cal = [
     ["2015-05-18","Vacation"],
 
     ## 2015-16
-    ["2015-08-31", "Pre Semester 1"],
+    ["2015-09-07", "Pre Semester 1", 1],
     ["2015-10-05", 1],
     ["2015-12-21", "Vacation"],
     ["2016-01-11", 12],
@@ -34,10 +34,13 @@ cal = [
     ["2016-02-01", 1],
     ["2016-03-14", "Vacation"],
     ["2016-04-11", 7],
-    ["2016-05-23", "Vacation"]
+    ["2016-05-23", "Vacation"],
 
     ## need to finish the last year with week 12, or the next will crash
-    ## Also, there is a ticker below at 104 weeks which needs updating
+
+    ## This is an explicit stop date now at week 52 -- turns out that
+    ## consecutive years do not necessarily start and end at the same point.
+    ["2016-08-29"]
     ]
 
 
@@ -64,15 +67,26 @@ def is_monday(date):
 
 ## switch string objects through to datetime objects
 def datetime_ify(cal_config):
-    return [[parse_date(d[0]),d[1]] for d in cal_config]
+    return [[parse_date(d[0])] + d[1:] for d in cal_config]
 
 def lint_calendar(cal):
 
     #last_calendar_week = 0
     last_semester_week = 0
     semester = 1
+    end_date = None
 
     for d in cal:
+        ## a single date signifies the end of the calendar, so complain if it
+        ## does not!
+        if(len(d) == 1):
+            if(end_date):
+                raise Exception("Calendar continues after end date: {}"
+                                 .format(d))
+            else:
+                end_date = d
+                continue
+
         ## tell me why, I like Mondays?
         if(not is_monday(d[0])):
             raise Exception("The date {} is not on a monday".
@@ -108,19 +122,24 @@ def interpolate_calendar(cal):
 
     working_week = cal_clone.pop(0)
 
-    for calendar_week in range(0,104):
+    while (working_week):
         ## add the working week
         retn_cal.append(working_week)
-        ## stuff on the calendar week
-        working_week.append(calendar_week % 52 + 1)
+
+        ## clone working week as we are going to change it now
+        working_week = list(working_week)
+
         ## increment the semester week for next time!
         if(type(working_week[1]) is int):
-            ## clone working week
-            working_week = list(working_week)
             working_week[1] = working_week[1] + 1
 
+        ## increment the calendar week for next time
+        working_week[2] = working_week[2] + 1
         ## work out the date after the current working week
         one_week_ahead = add_week(working_week[0])
+
+        ## remember the calendar week here, because the next config might be shorter
+        calendar_week = working_week[2]
 
         ## if there is a next element left on the calendar config
         ## and it's date is identical, then just use that instead
@@ -128,7 +147,16 @@ def interpolate_calendar(cal):
            one_week_ahead==cal_clone[0][0]):
             working_week = cal_clone.pop(0)
         else:
-            working_week = [one_week_ahead,working_week[1]]
+            working_week = [one_week_ahead,working_week[1],working_week[2]]
+
+        ## if the new working week is too short, then we need to add a calendar_week
+        if(len(working_week)==2):
+            working_week.append(calendar_week)
+
+        ## stop!!!
+        if(len(working_week)==1):
+            working_week = None
+
 
     return retn_cal
 
