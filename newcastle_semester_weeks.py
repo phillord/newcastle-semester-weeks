@@ -34,14 +34,28 @@ cal = [
     ["2016-02-01", 1],
     ["2016-03-14", "Vacation"],
     ["2016-04-11", 7],
+    ["2016-05-16", 12],
     ["2016-05-23", "Vacation"],
-
     ## need to finish the last year with week 12, or the next will crash
+
+    ## 2016-17
+    ["2016-09-05", "Pre Semester 1", 1],
+    ["2016-10-03", 1],
+    ["2016-12-19", "Vacation"],
+    ["2017-01-09", 12],
+    ["2017-01-16", "Assessment"],
+    ["2017-01-23", "Assessment"],
+    ["2017-01-30", 1],
+    ["2017-03-27", "Vacation"],
+    ["2017-04-24", 9],
+    ["2017-05-15", 12],
+    ["2017-05-22", "Assessment"],
+    ["2017-06-12", "Vacation"],
 
     ## This is an explicit stop date now at week 52 -- turns out that
     ## consecutive years do not necessarily start and end at the same point.
-    ["2016-08-29"]
-    ]
+    ["2017-08-28"]
+]
 
 
 ## user configuration stops here
@@ -104,8 +118,8 @@ def lint_calendar(cal):
             if(d[1] == 12 ):
                 last_semester_week = 0
             elif( d[1] < last_semester_week ):
-                raise Exception("Semester Weeks {} and {} are not increasing".
-                                format(d[1], last_semester_week) )
+                raise Exception("Semester Weeks {} and {} are not increasing, at: {}".
+                                format(d[1], last_semester_week, d) )
             elif(d[1] > 12):
                 raise Exception("Illegal semester week:{}".format(d))
             else:
