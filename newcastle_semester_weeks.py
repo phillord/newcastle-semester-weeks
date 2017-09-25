@@ -52,9 +52,22 @@ cal = [
     ["2017-05-22", "Assessment"],
     ["2017-06-12", "Vacation"],
 
+    ## 2017-18
+    ["2017-09-04", "Pre Semester 1", 1],
+    ["2017-10-02", 1],
+    ["2017-12-18", "Vacation"],
+    ["2018-01-08", 12],
+    ["2018-01-15", "Assessment"],
+    ["2018-01-29", 1],
+    ["2018-03-19", "Vacation"],
+    ["2018-04-16", 8],
+    ["2018-05-21", "Assessment"],
+    ["2018-06-11", "Vacation"],
+    ["2018-08-20", "Resit"],
+
     ## This is an explicit stop date now at week 52 -- turns out that
     ## consecutive years do not necessarily start and end at the same point.
-    ["2017-08-28"]
+    ["2018-08-27"]
 ]
 
 
